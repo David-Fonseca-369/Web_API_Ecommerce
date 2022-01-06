@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web_API_Ecommerce.Filters;
+using Web_API_Ecommerce.Helpers;
 
 namespace Web_API_Ecommerce
 {
@@ -30,6 +32,10 @@ namespace Web_API_Ecommerce
             //Configuramos el servicio automapper
             services.AddAutoMapper(typeof(Startup));
 
+            //Para el servicio almacenar archivos de manera local
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+            services.AddHttpContextAccessor();
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -40,7 +46,13 @@ namespace Web_API_Ecommerce
             });
 
 
-            services.AddControllers();
+            //services.AddControllers();
+
+            //Registra el log de errores como filtro global
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ExceptionFilter));
+            });
 
 
 
@@ -69,6 +81,9 @@ namespace Web_API_Ecommerce
             }
 
             app.UseHttpsRedirection();
+
+            //Permite servir archivos estaticos
+            app.UseStaticFiles();
 
             app.UseRouting();
 
