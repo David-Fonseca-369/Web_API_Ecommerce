@@ -20,6 +20,7 @@ namespace Web_API_Ecommerce.Controllers
         private readonly IAlmacenadorArchivos almacenadorArchivos;
         private readonly IMapper mapper;
         private readonly string contenedor = "imagenesProducto";
+        
 
 
         public ProductosController(ApplicationDbContext context, IAlmacenadorArchivos almacenadorArchivos, IMapper mapper)
@@ -33,6 +34,8 @@ namespace Web_API_Ecommerce.Controllers
         [HttpPost("crear")]
         public async Task<ActionResult> Crear([FromForm] ProductoCreacionDTO productoCreacionDTO)
         {
+
+            string rutaImagenPortada = await almacenadorArchivos.GuardarArchivo(contenedor, productoCreacionDTO.Portada);
             Producto producto = new()
             {
                 IdCategoria = productoCreacionDTO.IdCategoria,
@@ -42,6 +45,7 @@ namespace Web_API_Ecommerce.Controllers
                 Stock = productoCreacionDTO.Stock,
                 Vendidos = 0,
                 Descripcion = productoCreacionDTO.Descripcion,
+                Portada = rutaImagenPortada,
                 Estado = true
             };
 
@@ -97,7 +101,30 @@ namespace Web_API_Ecommerce.Controllers
                 PrecioVenta = x.PrecioVenta,
                 Stock = x.Stock,
                 Vendidos = x.Vendidos,
+                Portada = x.Portada,
                 Estado = x.Estado
+            }).ToList();
+
+        }
+
+        //GET: api/productos/cardsPaginacion
+        [HttpGet("cardsPaginacion")]
+        public async Task<ActionResult<List<ProductoCardDTO>>> CardsPaginacion([FromQuery] PaginacionDTO paginacionDTO)
+        {
+            var queryable = context.Productos.Where(x => x.Estado).AsQueryable();
+
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
+
+            var productosPaginacion = await queryable.Paginar(paginacionDTO).ToListAsync();
+
+            return productosPaginacion.Select( x => new ProductoCardDTO
+            {
+                IdProducto = x.IdProducto,
+                Nombre = x.Nombre,
+                PrecioVenta = x.PrecioVenta,
+                Vendidos = x.Vendidos,
+                Portada = x.Portada
+
             }).ToList();
 
         }
@@ -138,6 +165,17 @@ namespace Web_API_Ecommerce.Controllers
             return NoContent();
         }
 
+        private async Task<string> ObtenerImagen(int idProducto)
+        {
+            var imagen = await context.ImagenesProducto.FirstOrDefaultAsync(x => x.IdProducto == idProducto);
+
+            if (imagen == null)
+            {
+                return null;
+            }
+
+            return imagen.Ruta;
+        }
 
 
     }

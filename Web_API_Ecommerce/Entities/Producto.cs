@@ -21,6 +21,8 @@ namespace Web_API_Ecommerce.Entities
         public int Stock { get; set; }
         public int Vendidos { get; set; }
         public string Descripcion { get; set; }
+        [Required]
+        public string Portada { get; set; }
         public bool Estado { get; set; }
 
         //Relaciones

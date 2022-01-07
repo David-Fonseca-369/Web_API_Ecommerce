@@ -20,9 +20,10 @@ namespace Web_API_Ecommerce.DTOs.Producto
         [Required]
         public int Stock { get; set; }
         public string Descripcion { get; set; }
+        [Required]
+        public IFormFile Portada { get; set; }
 
         //Imagenes
-        [Required]
         public IList<IFormFile> Imagenes { get; set; }
     }
 }
