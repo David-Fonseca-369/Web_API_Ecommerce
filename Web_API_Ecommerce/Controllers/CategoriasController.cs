@@ -29,7 +29,7 @@ namespace Web_API_Ecommerce.Controllers
         [HttpGet("todas")]
         public async Task<ActionResult<List<CategoriaDTO>>> Todas()
         {
-            var categorias = await context.Categorias.ToListAsync();
+            var categorias = await context.Categorias.Where(x => x.Estado).ToListAsync();
             return mapper.Map<List<CategoriaDTO>>(categorias);
         }
 

@@ -10,10 +10,7 @@ namespace Web_API_Ecommerce
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
-        {
-
-        }
+        public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,10 +19,16 @@ namespace Web_API_Ecommerce
             modelBuilder.ApplyConfiguration(new CategoriaMap());
             modelBuilder.ApplyConfiguration(new ProductoMap());
             modelBuilder.ApplyConfiguration(new ImagenProductoMap());
+            modelBuilder.ApplyConfiguration(new UsuarioMap());
+            modelBuilder.ApplyConfiguration(new VentaCabeceraMap());
+            modelBuilder.ApplyConfiguration(new VentaDetalleMap());
         }
 
-        public DbSet<Categoria> Categorias{ get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<ImagenProducto> ImagenesProducto { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<VentaCabecera> VentasCabecera { get; set; }
+        public DbSet<VentaDetalle> VentaDetalles { get; set; }
     }
 }
